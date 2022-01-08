@@ -3,3 +3,38 @@ bq extract --destination_format CSV --compression GZIP --noprint_header deribit.
 bq load --source_format=CSV deribit.history_v2_1 'gs://deribit_bk/history_v2_1_*.csv'
 
 bq show --schema --format=prettyjson deribit.history_v3
+
+bq query \
+  --replace \
+  --destination_table deribit-220920:deribit.exp2 \
+  --use_legacy_sql=false \
+  "SELECT
+    *
+  FROM
+     deribit.history_v3
+  WHERE
+    dt >= '2021-03-01'"
+
+bq extract \
+--destination_format CSV \
+--compression GZIP \
+--noprint_header \
+deribit.exp2 \
+'gs://deribit_bk/exp2_*.csv'
+
+
+sudo -u postgres psql deribit -c "COPY prices FROM '/home/ubuntu/exp/exp2_000000000000' WITH (FORMAT csv)"
+sudo -u postgres psql deribit -c "COPY prices FROM '/home/ubuntu/exp/exp2_000000000001' WITH (FORMAT csv)"
+date
+sudo -u postgres psql deribit -c "COPY prices FROM '/home/ubuntu/exp/exp2_000000000002' WITH (FORMAT csv)"
+date
+sudo -u postgres psql deribit -c "COPY prices FROM '/home/ubuntu/exp/exp2_000000000003' WITH (FORMAT csv)"
+date
+sudo -u postgres psql deribit -c "COPY prices FROM '/home/ubuntu/exp/exp2_000000000004' WITH (FORMAT csv)"
+date
+sudo -u postgres psql deribit -c "COPY prices FROM '/home/ubuntu/exp/exp2_000000000005' WITH (FORMAT csv)"
+date
+sudo -u postgres psql deribit -c "COPY prices FROM '/home/ubuntu/exp/exp2_000000000006' WITH (FORMAT csv)"
+date
+
+
